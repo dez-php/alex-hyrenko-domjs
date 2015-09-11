@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DOM JS examples</title>
+
+    <script src="dom.js"></script>
+</head>
+<body title="DOM JS examples">
+    <div class="parent">
+        <div class="child">
+            <ul class="menu">
+                <li>
+                    <a href="#">Link 1</a>
+                </li>
+                <li>
+                    <a href="#">Link 2</a>
+                </li>
+                <li>
+                    <a href="#">Link 3</a>
+                </li>
+                <li>
+                    <a href="#"><div><span>222</span></div> Link 4</a>
+                </li>
+            </ul>
+        </div>
+        <div class="child"></div>
+        <div class="child"></div>
+        <div class="child"></div>
+        <div class="child">
+            <h1>DOM JS</h1>
+            <span>Examples</span>
+            <input name="test" type="text">
+        </div>
+    </div>
+    <script>
+        /*app.post('examples.html').then(function(data) {
+            console.dir(data);
+        });*/
+        app.DOM.ready(function($) {
+            console.dir($('input').val('test').parents());
+        });
+    </script>
+</body>
+</html>
