@@ -60,8 +60,8 @@
             console.log($('input').parents('form').size());
         });
 
-        (function (domjs, root) {
-            root.post('examples.html').then(function(data) {
+        (function (domjs) {
+            app.post('examples.html').then(function(data) {
                 console.dir(data);
             });
             domjs.ready(function($) {
@@ -80,7 +80,7 @@
                     });
                 });
             });
-        })(app.DOM, app);
+        })(app.DOM);
     </script>
 </body>
 </html>
