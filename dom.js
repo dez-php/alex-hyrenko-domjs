@@ -371,7 +371,7 @@
             request.addEventListener('load', function(response) {
                 resolve(response.target.response, response);
             }, false);
-            request.addEventListener('progress', options.progress || null, false);
+            request.upload.addEventListener('progress', options.progress || null, false);
             request.addEventListener('error', reject);
             request.addEventListener('abort', reject);
             request.send(options.data || null)
