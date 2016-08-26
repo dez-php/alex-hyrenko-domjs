@@ -1,11 +1,11 @@
-(function (){
+(function () {
     'use strict';
 
     var root = this;
 
     function createDescriptors(properties) {
-        var descriptors = { };
-        Object.keys(properties).forEach(function(key) {
+        var descriptors = {};
+        Object.keys(properties).forEach(function (key) {
             descriptors[key] = Object.getOwnPropertyDescriptor(properties, key);
             descriptors[key].enumerable = false;
         });
@@ -64,8 +64,7 @@
 
         if (isElement(elements)) {
             object.push(elements);
-        }
-        else elements.forEach(function(item) {
+        } else elements.forEach(function (item) {
             this.push(item);
         }.bind(object));
 
@@ -75,37 +74,40 @@
     /**
      * Add constructor to namespace
      */
-    var DOM = root.DOM = function( selector ) {
+    var DOM = root.DOM = function (selector) {
         return new DOMElements(selector);
     };
 
     /**
      * Static properties
      */
-    DOM.isElement       = isElement;
-    DOM.isElementsList  = isElementsList;
+    DOM.isElement = isElement;
+    DOM.isElementsList = isElementsList;
 
-    DOM.extend = function(properties) {
+    DOM.extend = function (properties) {
         Object.defineProperties(DOMElements.prototype, createDescriptors(properties));
     };
 
-    DOM.ready = function(callback) {
+    DOM.ready = function (callback) {
         if (!isFunction(callback)) return false;
-        document.addEventListener('DOMContentLoaded', function(e) {
-            callback.call({ }, DOM, e);
+        document.addEventListener('DOMContentLoaded', function (e) {
+            callback.call({}, DOM, e);
         }, false);
     };
 
     /** Events cache */
-    DOM.events = [ ];
+    DOM.events = [];
 
     /**
      * DOM elements collection
      * @param {string|Element|HTMLCollection} selector
      * @constructor
      */
-    function DOMElements( selector ) {
-        if (isElement(selector)) { this.push(selector); return; }
+    function DOMElements(selector) {
+        if (isElement(selector)) {
+            this.push(selector);
+            return;
+        }
 
         var elements = isElementsList(selector) ? selector : document.querySelectorAll(selector),
             i = 0, l = elements.length;
@@ -122,100 +124,104 @@
      * Base methods
      */
     DOM.extend({
-        each: function( callback ) {
-            this.forEach(function(item, index) {
+        each: function (callback) {
+            this.forEach(function (item, index) {
                 callback.call(item, item, index);
             });
 
             return this;
         },
 
-        text: function( text ) {
-            return text ? this.each(function() {
+        text: function (text) {
+            return text ? this.each(function () {
                 this.innerText = text;
             }) : this[0].innerText;
         },
 
-        html: function( html ) {
-            return html ? this.each(function(item) {
+        html: function (html) {
+            return html ? this.each(function (item) {
                 item.innerHTML = html;
             }) : this[0].innerHTML;
         },
 
-        val: function( value ) {
-            return value ? this.each(function(item) {
+        val: function (value, index) {
+            return value ? this.each(function (item) {
                 item.value = value;
-            }) : this[0].value
+            }) : (isElement(this[index || 0]) ? this[index || 0].value : null);
         },
 
-        parent: function() {
+        parent: function () {
             return createElements(this[0].parentNode);
         },
 
-        parents: function( selector ) {
-            var elem = this[0],
-                parents = createElements();
+        parents: function (selector) {
+            var parents = createElements();
 
-            while((elem = elem.parentNode)) {
-                if (elem.nodeType === 1) {
-                    if (selector) {
-                        if (elem.matches(selector)) { parents.push(elem); break; }
-                    } else {
-                        parents.push(elem);
+            this.each(function (element) {
+                while ((element = element.parentNode)) {
+                    if (element.nodeType === 1) {
+                        if (selector) {
+                            if (element.matches(selector)) {
+                                parents.push(element);
+                                break;
+                            }
+                        } else {
+                            parents.push(element);
+                        }
                     }
                 }
-            }
+            });
 
             return parents;
         },
 
-        find: function( selector ) {
-            var matches = [ ];
+        find: function (selector) {
+            var matches = [];
 
-            this.each(function() {
-                matches = matches.concat( toArray(this.querySelectorAll(selector)) );
+            this.each(function () {
+                matches = matches.concat(toArray(this.querySelectorAll(selector)));
             });
 
             return createElements(matches);
         },
 
-        eq: function( index ) {
+        eq: function (index) {
             return isElement(this[index]) ? createElements(this[index]) : null;
         },
 
-        append: function( html ) {
-            return this.each(function() {
+        append: function (html) {
+            return this.each(function () {
                 this.insertAdjacentHTML('beforeend', html);
             });
         },
 
-        after: function( html ) {
-            return this.each(function() {
+        after: function (html) {
+            return this.each(function () {
                 this.insertAdjacentHTML('afterend', html);
             });
         },
 
-        prepend: function( html ) {
-            return this.each(function() {
+        prepend: function (html) {
+            return this.each(function () {
                 this.insertAdjacentHTML('afterbegin', html);
             });
         },
 
-        before: function( html ) {
-            return this.each(function() {
+        before: function (html) {
+            return this.each(function () {
                 this.insertAdjacentHTML('beforebegin', html);
             });
         },
 
-        attr: function( key, value ) {
-            return value ? this.each(function() {
+        attr: function (key, value) {
+            return value ? this.each(function () {
                 this.setAttribute(key, value);
             }) : this[0].getAttribute(key);
         },
 
-        data: function( key, value ) {
-            return value || isObject(key) ? this.each(function(item) {
-                isObject(key) && each(key, function(name, val) {
+        data: function (key, value) {
+            return value || isObject(key) ? this.each(function (item) {
+                isObject(key) && each(key, function (name, val) {
                     item.dataset[name] = val;
                 });
 
@@ -223,8 +229,8 @@
             }) : this[0].dataset[key];
         },
 
-        remove: function() {
-            this.each(function(element) {
+        remove: function () {
+            this.each(function (element) {
                 element.parentNode.removeChild(element);
                 this.shift();
             }.bind(this));
@@ -235,24 +241,24 @@
      * Methods for elements classes
      */
     DOM.extend({
-        hasClass: function( name ) {
+        hasClass: function (name) {
             return this[0].classList.contains(name);
         },
 
-        addClass: function( name ) {
-            return this.each(function() {
+        addClass: function (name) {
+            return this.each(function () {
                 this.classList.add(name);
             });
         },
 
-        removeClass: function( name ) {
-            return this.each(function() {
+        removeClass: function (name) {
+            return this.each(function () {
                 this.classList.remove(name);
             });
         },
 
-        toggleClass: function( name ) {
-            return this.each(function() {
+        toggleClass: function (name) {
+            return this.each(function () {
                 this.classList.toggle(name);
             });
         }
@@ -263,22 +269,22 @@
      */
     DOM.extend({
         show: function () {
-            return this.each(function() {
+            return this.each(function () {
                 this.style.display = 'block';
             });
         },
 
         hide: function () {
-            return this.each(function() {
+            return this.each(function () {
                 this.style.display = 'none';
             });
         },
 
-        css: function( name, value ) {
-            return this.each(function() {
+        css: function (name, value) {
+            return this.each(function () {
                 if (isObject(name)) {
-                    each(name, function(key, val) {
-                        this.style[key] = val;
+                    each(name, function (key, value) {
+                        this.style[key] = value;
                     }.bind(this));
                 } else {
                     this.style[name] = value;
@@ -291,16 +297,16 @@
      * Help methods
      */
     DOM.extend({
-        index: function() {
+        index: function () {
             return this[0] ? toArray(this[0].parentNode.children).indexOf(this[0]) : -1;
         },
 
-        first: function() {
+        first: function () {
             if (!isElement(this[0])) return null;
             return createElements(this[0]);
         },
 
-        last: function() {
+        last: function () {
             if (!isElement(this[this.length - 1])) return null;
             return createElements(this[this.length - 1]);
         }
@@ -310,13 +316,13 @@
      * Events methods
      */
     DOM.extend({
-        on: function( name, selector, callback ) {
+        on: function (name, selector, callback) {
             var namespace = null;
             isFunction(selector) && (callback = selector) && (selector = null);
             (~name.indexOf('.')) && (name = name.split('.')) && (namespace = name[1]) && (name = name[0]);
 
             if (selector) {
-                var delegateCallback = function(e) {
+                var delegateCallback = function (e) {
                     if (e.target === this) return;
                     if (e.target.matches(selector)) {
                         return callback.call(e.target, e);
@@ -325,13 +331,14 @@
                     for (var i = 0, l = e.path.length; i < l; i++) {
                         if (e.path[i].parentNode === this) break;
                         if (e.path[i].matches(selector)) {
-                            callback.call(e.path[i], e); break;
+                            callback.call(e.path[i], e);
+                            break;
                         }
                     }
                 }
             }
 
-            return this.each(function() {
+            return this.each(function () {
                 this.addEventListener(name, delegateCallback || callback, false);
                 DOM.events.push({
                     name: name,
@@ -342,12 +349,12 @@
             });
         },
 
-        off: function( name ) {
+        off: function (name) {
             var namespace = null;
             (~name.indexOf('.')) && (name = name.split('.')) && (namespace = name[1]) && (name = name[0]);
 
-            return this.each(function() {
-                DOM.events.forEach(function(item, index) {
+            return this.each(function () {
+                DOM.events.forEach(function (item, index) {
                     if (item.name === name && item.namespace === namespace && item.node === this) {
                         this.removeEventListener(name, item.handler);
                         DOM.events.splice(index, 1);
@@ -356,19 +363,19 @@
             });
         },
 
-        trigger: function( eventName, detail ) {
-            return this.each(function() {
-                this.dispatchEvent( new CustomEvent(eventName, { detail: detail }) );
+        trigger: function (eventName, detail) {
+            return this.each(function () {
+                this.dispatchEvent(new CustomEvent(eventName, {detail: detail}));
             });
         }
     });
 
-    root.ajax = function( options ) {
-        return new Promise(function(resolve, reject) {
+    root.ajax = function (options) {
+        return new Promise(function (resolve, reject) {
             var request = new XMLHttpRequest();
             request.open(options.method || 'POST', options.url, options.async || true);
             request.responseType = options.type || '';
-            request.addEventListener('load', function(response) {
+            request.addEventListener('load', function (response) {
                 resolve(response.target.response, response);
             }, false);
             request.upload.addEventListener('progress', options.progress || null, false);
@@ -378,12 +385,12 @@
         });
     };
 
-    root.post = function( url, data ) {
-        return root.ajax({ url: url, data: data });
+    root.post = function (url, data) {
+        return root.ajax({url: url, data: data});
     };
 
-    root.get = function( url ) {
-        return root.ajax({ method: 'GET', url: url });
+    root.get = function (url) {
+        return root.ajax({method: 'GET', url: url});
     };
 
 }.call(window.app || (window.app = Object.create(null))));

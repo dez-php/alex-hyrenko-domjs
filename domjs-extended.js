@@ -2,8 +2,12 @@
     'use strict';
 
     domjs.extend({
-        value: function (value) {
-            return this.val(value);
+        value: function (value, index) {
+            return this.val(value, index);
+        },
+
+        size: function () {
+            return this.length;
         },
 
         native: function (index) {
@@ -16,10 +20,18 @@
             });
         },
 
-        lock: function () {
-            return this.on('submit', function () {
-                domjs(this).find('input, button').disable();
+        enable: function () {
+            return this.each(function (element) {
+                element.disabled = false;
             });
+        },
+
+        lock: function () {
+            return this.find('input, button, select, textarea').disable();
+        },
+
+        unlock: function () {
+            return this.find('input, button, select, textarea').enable();
         }
     });
 
