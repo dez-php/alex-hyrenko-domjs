@@ -6,21 +6,20 @@
             return this.val(value, index);
         },
 
-        get size () {
+        get size() {
             return this.length;
         },
 
-        set size (value) {
+        set size(value) {
             this.length = value;
         },
-
         native: function (index) {
             return domjs.isElement(this[index]) ? this[index] : null;
         },
 
         disabled (value) {
             return this.each(function (element) {
-               element.disabled = value;
+                element.disabled = value;
             });
         },
 
@@ -30,7 +29,7 @@
 
         unlock: function () {
             return this.find('input, button, select, textarea').disabled(false);
-        }
+        },
     });
 
 })(app.DOM);
