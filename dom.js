@@ -158,10 +158,13 @@
             var parents = createElements();
 
             this.each(function (element) {
-                while((element = element.parentNode)) {
+                while(element = element.parentNode) {
                     if (element.nodeType === 1 && !~parents.indexOf(element)) {
                         if (selector) {
-                            if (element.matches(selector)) { parents.push(element); break; }
+                            if (element.matches(selector)) {
+                                parents.push(element);
+                                break;
+                            }
                         } else {
                             parents.push(element);
                         }
